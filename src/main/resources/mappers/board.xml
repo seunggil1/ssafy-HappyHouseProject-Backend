@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.vue.mapper.BoardMapper">
+
+	<!-- 게시글 전체 조회 -->
+	<select id="selectBoard" resultType="board">
+		select b.articleno, b.userid, b.subject, b.content, b.hit, b.regtime, b.hit, count(commentno) as commentCnt
+		from board as b left join comment as c using(articleno)
+		group by articleno
+		order by articleno desc
+	</select>
+	
+	<!-- 게시글 상세 조회 -->
+	<select id="selectBoardByNo" resultType="board">
+		select b.articleno, b.userid, b.subject, b.content, b.hit, b.regtime, b.hit, count(commentno) as commentCnt
+		from board as b left join comment as c using(articleno)
+		group by articleno
+		having articleno = #{articleno}
+		order by articleno desc
+	</select>
+	
+	<select id="searchBySubject" parameterType="string" resultType="board">
+		select b.articleno, b.userid, b.subject, b.content, b.hit, b.regtime, b.hit, count(commentno) as commentCnt
+		from board as b left join comment as c using(articleno)
+		group by articleno
+		having b.subject like concat('%',#{keyword},'%')
+		order by articleno desc
+	</select>
+	
+	<select id="searchByUser" parameterType="string" resultType="board">
+		select b.articleno, b.userid, b.subject, b.content, b.hit, b.regtime, b.hit, count(commentno) as commentCnt
+		from board as b left join comment as c using(articleno)
+		group by articleno
+		having b.userid like concat('%',#{keyword},'%')
+		order by articleno desc
+	</select>
+	
+	<select id="searchByContent" parameterType="string" resultType="board">
+		select b.articleno, b.userid, b.subject, b.content, b.hit, b.regtime, b.hit, count(commentno) as commentCnt
+		from board as b left join comment as c using(articleno)
+		group by articleno
+		having b.content like concat('%',#{keyword},'%')
+		order by articleno desc
+	</select>
+	
+	<select id="searchBySubCon" parameterType="string" resultType="board">
+		select b.articleno, b.userid, b.subject, b.content, b.hit, b.regtime, b.hit, count(commentno) as commentCnt
+		from board as b left join comment as c using(articleno)
+		group by articleno
+		having b.content like concat('%',#{keyword},'%') or b.subject like concat('%',#{keyword},'%')
+		order by articleno desc
+	</select>
+
+	<!-- 게시글 등록 -->
+	<insert id="insertBoard" parameterType="board">
+		insert into board(
+			subject, userid, content
+		) values (
+			#{subject}, #{userid}, #{content}
+		)
+	</insert>
+	<!--  조회수 증가 -->
+	<update id="updateBoardhit" parameterType="int">
+		update board set hit = hit+1 
+		where articleno = #{articleno}
+	</update>
+	
+	<!-- 게시글 수정 -->
+	<update id="updateBoard" parameterType="board">
+		update board 
+		   set subject = #{subject}, 
+		   	   userid = #{userid}, 
+		   	   content = #{content}
+		 where articleno = #{articleno}
+	</update>
+
+	<!-- 게시글 삭제 -->
+	<delete id="deleteBoard" parameterType="int">
+		delete 
+		from board 
+		where articleno = #{articleno}
+	</delete>
+	
+	
+	<!-- 인기 게시글 top 10 조회 -->
+	<select id="getPopularBoard" resultType="board">
+		select b.articleno, b.userid, b.subject, b.content, b.hit, b.regtime, b.hit, count(commentno) as commentCnt
+		from board as b left join comment as c using(articleno)
+		group by articleno
+		order by hit desc limit 10
+	</select>
+
+</mapper>
+

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.vue.mapper.AddressMapper">
+
+	<select id="selectSidoInput" resultType="InputAddress">
+		select sidoCode as code,
+		sidoName as name
+		from sido
+	</select>
+
+	<select id="selectGugunInput" resultType="InputAddress">
+		select gugunCode as
+		code, gugunName as name
+		from gugun
+		where gugun.sidoCode = ${sidocode}
+	</select>
+
+	<select id="selectDongInput" resultType="InputAddress">
+		select dongCode as code,
+		dongName as name
+		from dong
+		where dong.gugunCode = ${guguncode}
+	</select>
+
+
+</mapper>
